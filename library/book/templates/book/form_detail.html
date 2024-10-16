@@ -1,0 +1,87 @@
+{% extends 'book/base.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/form_detail.min.css' %}">
+{% endblock %}
+
+{% block title %}
+    <title>Библиотека | Форма | {{ title }}</title>
+{% endblock %}
+
+{% block content %}
+    <div class="logo">
+        <img src="{% static 'img/3044278b-f889-5b3c-b198-c0fe03b707b8.jpg' %}" alt="logo">
+        <div class="container">
+            <div class="logo__title">CRUD Формы</div>
+            <div class="logo__subtitle">CreateReadUpdateDelete</div>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <div class="content__block-wrapper">
+                <div class="prev"></div>
+                <div class="poor">
+                    <div class="content__block-inner">
+                        <div class="content__block">
+                            <table>
+                                <tr>
+                                    <th>№</th>
+                                    <th>Название</th>
+                                    <th></th>
+                                </tr>
+                                {% for object in object_list %}
+                                    <tr>
+                                        <td>{{ object.pk }}</td>
+                                        <td>{{ object }}</td>
+                                        <td class="form">
+                                            <button value="{{ object.pk }}" class="form__event-open" type="submit">
+                                                <img src="{% static 'icons/check-tick-svgrepo-com.svg' %}" alt="check">
+                                            </button>
+
+                                            <button class="form__event-delete" type="submit">
+                                                <img src="{% static 'icons/cancel-20px-svgrepo-com.svg' %}" alt="cancel">
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                        <div class="content__block">
+                            <form action="" method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="form">
+                                    {% for item in form %}
+                                        <div class="form__info">
+                                            {{ item }}
+                                        </div>
+                                    {% endfor %}
+                                    <button class="form__btn-add" type="submit">Добавить</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="next"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal">
+        <div class="modal__form">
+            <img class="modal__btn-cancel" src="{% static 'icons/cross-svgrepo-com.svg' %}" alt="cancel">
+            <form action="" method="post">
+                <div class="modal__form-info">
+                    <input class="modal__form-input" name="name" type="text" id="name" placeholder="Текст выбранной записи">
+                    <input class="modal__form-input" name="name" type="text" id="name" placeholder="Текст выбранной записи">
+                </div>
+                <button class="modal__form-btn" type="submit">Сохранить!</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'js/bundle_detail.js' %}"></script>
+{% endblock %}

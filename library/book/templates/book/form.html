@@ -1,0 +1,29 @@
+{% extends 'book/base.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/form.min.css' %}">
+{% endblock %}
+
+{% block title %}
+    <title>Библиотека | Формы</title>
+{% endblock %}
+
+{% block content %}
+    <div class="logo">
+        <img src="{% static 'img/3044278b-f889-5b3c-b198-c0fe03b707b8.jpg' %}" alt="logo">
+        <div class="container">
+            <div class="logo__title">CRUD Формы</div>
+            <div class="logo__subtitle">CreateReadUpdateDelete</div>
+        </div>
+    </div>
+    <div class="content">
+        <div class="container">
+            <div class="content__block">
+                {% for form in forms %}
+                    <a href="{% url 'book:form-model' form.0 %}" class="content__block-item"><span>{{ form.1 }}</span></a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="{% static 'icons/library-svgrepo-com.ico' %}">
+    {% block css %} {% endblock %}
+    {% block title %} {% endblock %}
+</head>
+<body>
+    <div class="navigate">
+        <div class="container">
+            <div class="navigate__block">
+                <div class="navigate__item">
+                    <span><a href="{% url 'book:form-view' %}">Формы</a></span>
+                </div>
+                <a href="{% url 'book:index' %}"><img class="navigate__logo" src="{% static 'icons/library-svgrepo-com.svg' %}" alt="logo"></a>
+                <div class="navigate__item">
+                    <span>API</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% block content %} {% endblock %}
+    <div class="footer">
+        <div class="container">
+            <div class="footer__block">
+                <div class="footer__blocks">
+                    <div class="footer__blocks-field">ИМЯ:<br>ФАМИЛИЯ:<br>ОТЧЕСТВО:</div>
+                    <div class="footer__blocks-item">ОЛЕГ<br>ЗЕЛЕНСКИЙ<br>КАЗАХСТАНСКИЙ</div>
+                </div>
+                <div class="footer__blocks">
+                    <div class="footer__blocks-field">Telegram:<br>Whast'app:<br>GitHub:</div>
+                    <div class="footer__blocks-item">
+                        <a href="https://t.me/bratella065">клик</a>
+                        <a href="https://t.me/programmer_slaves">клик</a>
+                        <a href="https://github.com/lxftx">клик</a>
+                    </div>
+                </div>
+                <div class="footer__blocks">
+                    <div class="footer__blocks-field">Number:<br>Year:<br>CVC:</div>
+                    <div class="footer__blocks-item">4444 3334 4456 3465 3452<br>12/30<br>643</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% block script %}{% endblock %}
+</body>
+</html>

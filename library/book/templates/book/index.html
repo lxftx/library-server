@@ -1,0 +1,118 @@
+{% extends 'book/base.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/index.min.css' %}">
+{% endblock %}
+
+{% block title %}
+    <title>Библиотека</title>
+{% endblock %}
+
+{% block content %}
+    <div class="logo">
+        <div class="logo__window">
+            <div class="logo__window-wrapper">
+                <div class="logo__window-inner">
+                    <div class="logo__window-item">
+                        <img src="{% static 'img/81370f3a-9e8e-5abd-82da-4c2ac4cde7de.jpeg' %}" alt="">
+                    </div>
+                    <div class="logo__window-item">
+                        <img src="{% static 'img/7923cf29ae0e21abdd57f7a342919ee5.jpg' %}" alt="">
+                    </div>
+                    <div class="logo__window-item">
+                        <img src="{% static 'img/4.jpg' %}" alt="">
+                    </div>
+                    <div class="logo__window-item">
+                        <img src="{% static 'img/i.webp' %}" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="logo__descr">
+            <div class="logo__title">
+                Я получил образование в библиотеке.
+            </div>
+            <div class="logo__subtitle">
+                Совершенно бесплатно!
+            </div>
+            <div class="logo__text">
+                Всем известно, как тихи кладбища. Библиотека – самое веселое из них. Тут уж покойники в полном составе: они не сделали ничего плохого, лишь писали... От книги исходит аромат склепа. Вот тут начинается странный процесс, которую он называет чтением. С одной стороны, это обретение: он передает свое тело мертвым, чтобы они могли ожить. С другой – это общение с потусторонним миром.
+            </div>
+        </div>
+    </div>
+    <div class="info">
+        <div class="container">
+            <div class="title">о сайте</div>
+            <div class="info__title">Это обычный сайт!</div>
+            <div class="info__subtitle">формы, списки, выводы, детали, калькуляторы</div>
+            <div class="info__text">О да, это сайт разработан на PYTHON!<br>Удивительно, но я за 4 года не смог осилить C#.<br>Поэтому предлагаю отказаться от всего и писать Web на C!</div>
+            <div class="info__descr">
+                <div class="info__card"><img src="{% static 'img/1.png' %}" alt="C"></div>
+                <div class="info__card"><img src="{% static 'img/2.jpg' %}" alt="C"></div>
+                <div class="info__card"><img src="{% static 'img/3.jpg' %}" alt="C"></div>
+            </div>
+            <div class="info__poor">
+                Дизайнер я никудышный, но имеем что имеем или кого имееют.<br>Я не знаю, что пишу.<br>Но факт что все говно, Python TOP!
+            </div>
+        </div>
+    </div>
+    <div class="oninfo">
+        <div class="container">
+            <div class="title">На сайте</div>
+            <div class="oninfo__title">Смотря в это вы погружаетесь в будущее!</div>
+            <div class="oninfo__subtitle">SWAGGER, API</div>
+            <div class="oninfo__descr">
+                <div class="block">
+                    <img src="{% static 'img/swagger-ui.png' %}" alt="swagger">
+                    <div class="block__descr">
+                        <div class="block__title">Swagger: что это и как работать с документацией</div>
+                        <div class="block__text">Swagger — это набор инструментов, который позволяет автоматически описывать API на основе его кода. API — интерфейс для связи между разными программными продуктами, и у каждого проекта он свой. Документация, автоматически созданная через Swagger, облегчает понимание API для компьютеров и людей.</div>
+                    </div>
+                </div>
+                <div class="block">
+                    <img src="{% static 'img/React-admin-и-django-rest-framework-1.png' %}" alt="swagger">
+                    <div class="block__descr">
+                        <div class="block__title">Django REST Framework (DRF)</div>
+                        <div class="block__text">Это мощный и гибкий инструмент для создания веб-интерфейсов (web APIs). Он дает возможность разработчикам не изобретать колесо, самостоятельно создавая сложный и громоздкий REST-интерфейс с нуля. Чем сложнее будут становиться ваши проекты, тем лучше вы будете осознавать необходимость использования. DRF или других полезных REST-фреймворков.</div>
+                    </div>
+                </div>
+                <div class="block">
+                    <img src="{% static 'img/1fad67f464e0393f7b850bfa9df330f8.png' %}" alt="swagger">
+                    <div class="block__descr">
+                        <div class="block__title">Django освобожденный</div>
+                        <div class="block__text">Это свободный фреймворк для разработки быстрых и безопасных веб-приложений и сайтов на языке Python. Использует шаблон проектирования MVC.Как и любой другой фреймворк, «Джанго» — это программная платформа (каркас), на который разработчик «навешивает» дополнительные компоненты приложения, например: интерфейс пользователя; скрипты (сценарии) работы элементов приложения/сайта; программные библиотеки; мультимедийный контент (фото, видео, аудио); модули безопасности; базы данных и т.д.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="database">
+        <div class="container">
+            <div class="title">database</div>
+            <div class="database__title">Диаграмма 1-ой версии базы данных</div>
+            <div class="database__subtitle">База данных, таблицы, поля, типы данных, связи</div>
+            <div class="database__descr" style="position: relative;">
+                <div class="database__descr-item"><img src="{% static 'img/erd.png' %}" alt="erd"></div>
+                <div class="database__descr-item"><img src="{% static 'img/book.png' %}" alt="book"></div>
+                <div class="database__descr-item"><img src="{% static 'img/authors.png' %}" alt="authors"></div>
+                <div class="database__descr-item"><img src="{% static 'img/translators.png' %}" alt="translators"></div>
+                <div class="database__descr-item"><img src="{% static 'img/dircet.png' %}" alt="dircet"></div>
+                <div class="database__descr-item"><img src="{% static 'img/publishing.png' %}" alt="publishing"></div>
+                <div class="database__descr-item"><img src="{% static 'img/language.png' %}" alt="language"></div>
+                <div class="database__descr-item"><img src="{% static 'img/bingings.png' %}" alt="bingings"></div>
+                <div class="database__descr-item"><img src="{% static 'img/cities.png' %}" alt="cities"></div>
+                <div class="database__descr-item"><img src="{% static 'img/countries.png' %}" alt="countries"></div>
+            </div>
+            <div class="info__poor">
+                <div>Милая, ты мне очень дорога. Поэтому я найду кого-нибудь подешевле.</div>
+                <img class="info__poor-img" src="{% static 'img/URpfphVZV796bD26Hqiz4cWpxD4-960.jpg' %}" alt="Внимание">
+                <div></div>Говорят, что время — деньги. Но почему-то банкоматы времени не выдают.</div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'js/bundle_index.js' %}"></script>
+{% endblock %}
