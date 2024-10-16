@@ -1,6 +1,8 @@
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, status
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
+from rest_framework import filters
+from django.utils import timezone
 
 from api.serializers import (LanguagesSerializer, PublishingSerializer,
                              CitiesSerializer, TranslatorsSerializer,
@@ -12,97 +14,147 @@ from book.models import Languages, Publishing, Direction, Translators, Countries
     Bindings
 
 
-class LanguagesViewSet(viewsets.ModelViewSet):
+class BaseClassViewSet(viewsets.ModelViewSet):
+    """Базовый класс для классов наследующихся от viewsets.ModelViewSet"""
+
+    # При каждом запросе ModelViewSet вызывает метод get_permissions
+    def get_permissions(self):
+        """Переопределяем метод get_permissions, где назначаем свои собственные разрешения на определенные запросы"""
+        if self.action == 'list':
+            permission_classes = [permissions.AllowAny]
+        elif self.action == 'retrieve':
+            permission_classes = [permissions.IsAuthenticated]
+        elif self.action in ['update', 'partial_update', 'create', 'delete']:
+            permission_classes = [permissions.IsAdminUser]
+        else:
+            permission_classes = [permissions.AllowAny]
+
+        # Возвращаем соответствующий список классов разрешений
+        return [permission() for permission in permission_classes]
+
+    def perform_create(self, serializer):
+        """Переопределили метод perform_create, который срабатывает при создании объекта и выводит информацию о
+        создаваемом объекте"""
+        super().perform_create(serializer)
+        print(f"LOG : "
+              f"{timezone.now()} :"
+              f" [CREATE] Model({serializer.Meta.model._meta.verbose_name_plural.title()}) -> {serializer.instance}")
+
+    def perform_update(self, serializer):
+        """Переопределили метод perform_update, который срабатывает при обновлении объекта и выводит информацию о
+        обновляемом объекте"""
+        # Вызов стандартного обновления
+        super().perform_update(serializer)
+        # Добавление своей логики после обновления
+        print(f"LOG :"
+              f" {timezone.now()} :"
+              f" [UPDATE] Model({serializer.Meta.model._meta.verbose_name_plural.title()}) -> {serializer.instance}")
+
+    def perform_destroy(self, instance):
+        """Переопределили метод perform_destroy, который срабатывает при удалении объекта и выводит информацию о
+        обновляемом объекте"""
+        # Вызов стандартного обновления
+        super().perform_destroy(instance)
+        # Добавление своей логики после обновления
+        print(f"LOG :"
+              f" {timezone.now()} :"
+              f" [DELETE] Model({instance._meta.verbose_name_plural.title()}) -> {instance}")
+
+
+class LanguagesViewSet(BaseClassViewSet):
     """
-    Endpoint для просмотра и редактирования данных языков
+    API endpoint для управления языками
     """
     queryset = Languages.objects.all()
     serializer_class = LanguagesSerializer
-    permission_classes = [permissions.AllowAny]
 
 
-class PublishingViewSet(viewsets.ModelViewSet):
+class PublishingViewSet(BaseClassViewSet):
     """
-    Endpoint для просмотра и редактирования данных издательств
+    API endpoint для управления издательствами
     """
     queryset = Publishing.objects.all()
     serializer_class = PublishingSerializer
-    permission_classes = [permissions.AllowAny]
 
 
-class DirectionViewSet(viewsets.ModelViewSet):
+class DirectionViewSet(BaseClassViewSet):
     """
-    Endpoint для просмотра и редактирования данных направлений
+    API endpoint для управления направлениями
     """
     queryset = Direction.objects.all()
     serializer_class = DirectionSerializer
-    permission_classes = [permissions.AllowAny]
 
 
-class TranslatorViewSet(viewsets.ModelViewSet):
+class TranslatorViewSet(BaseClassViewSet):
     """
-    Endpoint для просмотра и редактирования данных переводчиков
+    API endpoint для управления переводчиками
     """
     queryset = Translators.objects.all()
     serializer_class = TranslatorsSerializer
-    permission_classes = [permissions.AllowAny]
 
 
-class CountriesViewSet(viewsets.ModelViewSet):
+class CountriesViewSet(BaseClassViewSet):
     """
-    Endpoint для просмотра и редактирования данных стран
+    API endpoint для управления странами
     """
     queryset = Countries.objects.all()
     serializer_class = CountrySerializer
-    permission_classes = [permissions.AllowAny]
 
 
-class CitiesViewSet(viewsets.ModelViewSet):
+class CitiesViewSet(BaseClassViewSet):
     """
-    Endpoint для просмотра и редактирования данных городов
+    API endpoint для управления городами
     """
     queryset = Cities.objects.all().select_related('country')
     serializer_class = CitiesSerializer
-    permission_classes = [permissions.AllowAny]
 
 
-class AuthorsViewSet(viewsets.ModelViewSet):
+class AuthorsViewSet(BaseClassViewSet):
     """
-    Endpoint для просмотра и редактирования данных авторов книг
+    API endpoint для управления авторами
     """
     queryset = Authors.objects.all()
     serializer_class = AuthorsSerializer
-    permission_classes = [permissions.AllowAny]
+    search_fields = ['first_name', 'last_name']
 
 
-class GenreViewSet(viewsets.ModelViewSet):
+class GenreViewSet(BaseClassViewSet):
     """
-    Endpoint для просмотра и редактирования данных жанров книг
+    API endpoint для управления жанрами
     """
     queryset = Genres.objects.all()
     serializer_class = GenresSerializer
-    permission_classes = [permissions.AllowAny]
 
 
-class BindingsViewSet(viewsets.ModelViewSet):
+class BindingsViewSet(BaseClassViewSet):
     """
-    Endpoint для просмотра и редактирования данных жанров книг
+    API endpoint для управления переплетами
     """
     queryset = Bindings.objects.all()
     serializer_class = BindingsSerializer
-    permission_classes = [permissions.AllowAny]
 
 
-class BooksViewSet(viewsets.ModelViewSet):
+class BooksViewSet(BaseClassViewSet):
     """
     API endpoint для управления книгами
     """
     queryset = Books.objects.select_related(
-            "genre", "language", "binding"
-        ).prefetch_related(
-            "author", "interpreter", "direction", "publishing"
-        )
-    permission_classes = [permissions.AllowAny]
+        "genre", "language", "binding"
+    ).prefetch_related(
+        "author", "interpreter", "direction", "publishing"
+    )
+    # filter_backends — это атрибут, который определяет, какие фильтры будут применяться к запросу. Здесь мы добавили
+    # filters.SearchFilter, чтобы использовать возможности поиска. Чтобы SearchFilter применялся ко всем viewsets
+    # проекта, в settings.py была добавлена кофигурация.
+    # filter_backends = [filters.SearchFilter]
+    # search_fields — это список полей, по которым будет выполняться поиск. В данном случае можно искать по названию
+    # книги (name) и имени автора (author__first_name). В search_fields можно использовать различные выражения для
+    # поиска:
+    # ^field_name: поиск начинается с заданного значения.
+    # =field_name: точное совпадение.
+    # @field_name: полнотекстовый поиск (поддерживается только в некоторых базах данных, таких как PostgreSQL).
+    # field_name: простой поиск, который ищет совпадения по содержимому.
+    search_fields = ['^name', '=author__first_name']
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -111,6 +163,20 @@ class BooksViewSet(viewsets.ModelViewSet):
             return BooksRetrieveSerializer
         else:
             return BooksCreateSerializer
+
+    def create(self, request, *args, **kwargs):
+        """Переопределили метод create, в котором мы сами выполняем действия проверки и сохранения. После успешного 
+        сохранения, выводится полная информация о сохраненной записи"""
+        # Используем `BooksCreateSerializer` для валидации и сохранения данных
+        serializer = BooksCreateSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            created_book = serializer.save()
+            # Сериализуем сохраненный объект с помощью `BooksRetrieveSerializer`
+            retrieve_serializer = BooksRetrieveSerializer(created_book)
+            # Возвращаем сериализованные данные созданного объекта с кодом 201 (Created)
+            return Response(retrieve_serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def update(self, request, *args, **kwargs):
         """Переопределили метод update для вывода понятных данных при put методе"""
@@ -144,22 +210,10 @@ class BooksViewSet(viewsets.ModelViewSet):
         return Response(retrieve_serializer.data)
 
     def get_object(self):
+        """Переопределили метод get_object, который проверяет существует ли такая запись и разрешен ли запрос с
+        этим объектом"""
         obj = get_object_or_404(self.get_queryset(), pk=self.kwargs["pk"])
         # Проверяет, должен ли запрос быть разрешен для данного объекта.
         # Создает соответствующее исключение, если запрос не разрешен.
         self.check_object_permissions(self.request, obj)
         return obj
-
-    def perform_update(self, serializer):
-        """Переопределили метод perform_update, который срабатывает при обновлении объекта и выводит информацию о
-        обновляемом объекте"""
-        # Вызов стандартного обновления
-        super().perform_update(serializer)
-        # Добавление своей логики после обновления
-        print(f"LOG : [UPDATE] obj -> {serializer.instance}")
-
-    def perform_create(self, serializer):
-        """Переопределили метод perform_create, который срабатывает при создании объекта и выводит информацию о
-        создаваемом объекте"""
-        super().perform_create(serializer)
-        print(f"LOG : [CREATE] obj -> {serializer.instance}")

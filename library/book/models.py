@@ -131,7 +131,7 @@ class Bindings(models.Model):
 
 
 class Books(models.Model):
-    name = models.CharField(max_length=256, verbose_name="Книга")
+    name = models.CharField(max_length=256, verbose_name="Книга", unique=True)
     info = models.TextField(verbose_name="О книге", null=True, blank=True)
     ISBN = models.CharField(max_length=13, verbose_name="ISBN")
     quantity = models.PositiveSmallIntegerField(verbose_name="Количество книг на складе")
