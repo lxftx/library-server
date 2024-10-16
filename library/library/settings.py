@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django_filters',
     'drf_yasg',
     'book',
     'api'
@@ -162,6 +163,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': [
-        'rest_framework.filters.SearchFilter',
+        # 'rest_framework.filters.SearchFilter',
+        'django_filters.rest_framework.DjangoFilterBackend'
     ]
 }

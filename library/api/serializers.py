@@ -66,12 +66,12 @@ class BooksAuthorsSerializer(serializers.ModelSerializer):
 class AuthorsListSerializer(serializers.ModelSerializer):
     born = serializers.SerializerMethodField()
 
-    def get_born(self, obj):
-        return f"{obj.born.name}, {obj.born.country}"
-
     class Meta:
         model = Authors
         fields = ('id', 'first_name', 'last_name', 'patronymic', 'date', 'born')
+
+    def get_born(self, obj):
+        return f"{obj.born.name}, {obj.born.country}"
 
 
 class AuthorsSerializer(serializers.ModelSerializer):

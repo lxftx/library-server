@@ -1,12 +1,14 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, permissions, status
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import filters
 from django.utils import timezone
 
+from api.filters import AuthorFilter
 from api.serializers import (LanguagesSerializer, PublishingSerializer,
                              CitiesSerializer, TranslatorsSerializer,
-                             CountrySerializer, AuthorsSerializer,
+                             CountrySerializer, AuthorsListSerializer, AuthorsSerializer,
                              GenresSerializer, BooksSerializer,
                              BindingsSerializer, DirectionSerializer,
                              BooksCreateSerializer, BooksRetrieveSerializer)
@@ -114,8 +116,23 @@ class AuthorsViewSet(BaseClassViewSet):
     API endpoint для управления авторами
     """
     queryset = Authors.objects.all()
-    serializer_class = AuthorsSerializer
-    search_fields = ['first_name', 'last_name']
+    # search_fields - используется у SearchFilter
+    # search_fields = ['first_name', 'last_name']
+    # filter_backends - передаем модуль фильтрации, если в настройках не указали глобально
+    # filter_backends = [DjangoFilterBackend]
+    # filterset_fields - используется для простой фильтрации на основе равенства (используется у DjangoFilterBackend)
+    # filterset_fields = ['first_name', 'last_name']
+    filterset_class = AuthorFilter
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return AuthorsListSerializer
+        else:
+            return AuthorsSerializer
+
+    def list(self, request, *args, **kwargs):
+        print(request.GET)
+        return super().list(request, *args, **kwargs)
 
 
 class GenreViewSet(BaseClassViewSet):
@@ -138,6 +155,13 @@ class BooksViewSet(BaseClassViewSet):
     """
     API endpoint для управления книгами
     """
+    # select_related - Используется для оптимизации запросов, когда у вас есть ForeignKey или OneToOneField,
+    # и вы хотите загружать связанные объекты в одном SQL-запросе с использованием JOIN. Делает SQL JOIN с таблицами
+    # связанных объектов, чтобы получить все данные за один запрос, что ускоряет доступ к связанным данным.
+    # prefetch_related - Используется для оптимизации запросов, когда у вас есть ManyToManyField или ForeignKey и вам
+    # нужно загружать связанные объекты, но JOIN неэффективен или невозможен. Выполняет отдельный SQL-запрос для
+    # каждой связанной модели и затем связывает результаты в Python, что более эффективно при работе с отношениями
+    # ManyToMany и большими наборами данных.
     queryset = Books.objects.select_related(
         "genre", "language", "binding"
     ).prefetch_related(
@@ -164,9 +188,10 @@ class BooksViewSet(BaseClassViewSet):
         else:
             return BooksCreateSerializer
 
+    # Переопределили метод create, в котором мы сами выполняем действия проверки и сохранения. После успешного
+    #         сохранения, выводится полная информация о сохраненной записи
     def create(self, request, *args, **kwargs):
-        """Переопределили метод create, в котором мы сами выполняем действия проверки и сохранения. После успешного 
-        сохранения, выводится полная информация о сохраненной записи"""
+        """API endpoint добавление новой книги"""
         # Используем `BooksCreateSerializer` для валидации и сохранения данных
         serializer = BooksCreateSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
@@ -178,8 +203,9 @@ class BooksViewSet(BaseClassViewSet):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    # Переопределили метод update для вывода понятных данных при put методе
     def update(self, request, *args, **kwargs):
-        """Переопределили метод update для вывода понятных данных при put методе"""
+        """API endpoint обновления данных книги"""
         # Выполняем стандартное обновление partial=True - говорит что обновление будет частичным. False - ожидается,
         # что все поля должны быть переданы, иначе будет ошибка
         partial = kwargs.pop('partial', False)

@@ -135,6 +135,8 @@ class Books(models.Model):
     info = models.TextField(verbose_name="О книге", null=True, blank=True)
     ISBN = models.CharField(max_length=13, verbose_name="ISBN")
     quantity = models.PositiveSmallIntegerField(verbose_name="Количество книг на складе")
+    # related_name - позволяет задать имя обратного отношения для модели, чтобы было проще обращаться к связанным
+    # объектам. Задает имя, через которое можно обращаться к связанным объектам из другой модели.
     genre = models.ForeignKey(to=Genres, on_delete=models.SET_NULL, verbose_name="Жанр", null=True, blank=True, related_name="books_genre")
     author = models.ManyToManyField(to=Authors, verbose_name="Автор(-ы)", related_name="books_authors")
     interpreter = models.ManyToManyField(to=Translators, verbose_name="Переводчик(-и)", related_name="interpreter",

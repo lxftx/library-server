@@ -6,3 +6,4 @@ django-environ
 environs
 pillow
 setuptools
+django-filter
