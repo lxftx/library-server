@@ -1,38 +1,40 @@
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, permissions, status
+from django.utils import timezone
+from rest_framework import permissions, status, viewsets
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
-from rest_framework import filters
-from django.utils import timezone
 
-from api.filters import AuthorFilter
-from api.serializers import (LanguagesSerializer, PublishingSerializer,
-                             CitiesSerializer, TranslatorsSerializer,
-                             CountrySerializer, AuthorsListSerializer, AuthorsSerializer,
-                             GenresSerializer, BooksSerializer,
-                             BindingsSerializer, DirectionSerializer,
-                             BooksCreateSerializer, BooksRetrieveSerializer)
-from book.models import Languages, Publishing, Direction, Translators, Countries, Cities, Authors, Genres, Books, \
-    Bindings
+from api.filters import AuthorFilter, BookFilter
+from api.serializers import (AuthorsListSerializer, AuthorsSerializer,
+                             BindingsSerializer, BooksCreateSerializer,
+                             BooksRetrieveSerializer, BooksSerializer,
+                             CitiesSerializer, CountrySerializer,
+                             DirectionSerializer, GenresSerializer,
+                             LanguagesSerializer, PublishingSerializer,
+                             TranslatorsSerializer)
+from book.models import (Authors, Bindings, Books, Cities, Countries,
+                         Direction, Genres, Languages, Publishing, Translators)
 
 
 class BaseClassViewSet(viewsets.ModelViewSet):
     """Базовый класс для классов наследующихся от viewsets.ModelViewSet"""
+    permission_classes = [permissions.IsAuthenticated]
 
     # При каждом запросе ModelViewSet вызывает метод get_permissions
-    def get_permissions(self):
-        """Переопределяем метод get_permissions, где назначаем свои собственные разрешения на определенные запросы"""
-        if self.action == 'list':
-            permission_classes = [permissions.AllowAny]
-        elif self.action == 'retrieve':
-            permission_classes = [permissions.IsAuthenticated]
-        elif self.action in ['update', 'partial_update', 'create', 'delete']:
-            permission_classes = [permissions.IsAdminUser]
-        else:
-            permission_classes = [permissions.AllowAny]
+    # def get_permissions(self):
+    #     """Переопределяем метод get_permissions, где назначаем свои собственные разрешения на определенные запросы"""
+    #     if self.action == 'list':
+    #         permission_classes = [permissions.AllowAny]
+    #     elif self.action == 'retrieve':
+    #         permission_classes = [permissions.IsAuthenticated]
+    #     elif self.action in ['update', 'partial_update', 'create', 'delete']:
+    #         permission_classes = [permissions.IsAdminUser]
+    #     else:
+    #         permission_classes = [permissions.AllowAny]
+    #
+    #     # Возвращаем соответствующий список классов разрешений
+    #     return [permission() for permission in permission_classes]
 
-        # Возвращаем соответствующий список классов разрешений
-        return [permission() for permission in permission_classes]
+
 
     def perform_create(self, serializer):
         """Переопределили метод perform_create, который срабатывает при создании объекта и выводит информацию о
@@ -178,7 +180,8 @@ class BooksViewSet(BaseClassViewSet):
     # =field_name: точное совпадение.
     # @field_name: полнотекстовый поиск (поддерживается только в некоторых базах данных, таких как PostgreSQL).
     # field_name: простой поиск, который ищет совпадения по содержимому.
-    search_fields = ['^name', '=author__first_name']
+    # search_fields = ['^name', '=author__first_name']
+    filterset_class = BookFilter
 
     def get_serializer_class(self):
         if self.action == "list":

@@ -1,18 +1,17 @@
-from django.http import HttpResponse, Http404
+from django import forms
+from django.db.models import Model
+from django.db.models.base import ModelBase
+from django.http import Http404, HttpResponse
 from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView
-from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView
+from django.views.generic.list import ListView
 
-from django.db.models.base import ModelBase
-from django.db.models import Model
-from django import forms
-from . import models
-from book.models import (Languages, Publishing, Translators,
-                         Countries, Direction, Cities,
-                         Genres, Authors, Books, Bindings)
 from book.forms import create_form_for_model
+from book.models import (Authors, Bindings, Books, Cities, Countries,
+                         Direction, Genres, Languages, Publishing, Translators)
 
+from . import models
 from .common.views import TitleMixin
 
 

@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 
-from book.models import Books, Languages, Publishing, Direction, Translators, Countries, Authors, Genres, Cities, \
-    Bindings
+from book.models import (Authors, Bindings, Books, Cities, Countries,
+                         Direction, Genres, Languages, Publishing, Translators)
 
 
 class AdminImage:

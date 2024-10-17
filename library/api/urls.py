@@ -1,13 +1,16 @@
-from django.urls import path, include
+from django.urls import include, path
+from rest_framework.authtoken.views import obtain_auth_token
 
-from api.views import (LanguagesViewSet, PublishingViewSet, DirectionViewSet,
-                       TranslatorViewSet, CountriesViewSet, CitiesViewSet, AuthorsViewSet, GenreViewSet, BooksViewSet,
-                       BindingsViewSet)
+from api.views import (AuthorsViewSet, BindingsViewSet, BooksViewSet,
+                       CitiesViewSet, CountriesViewSet, DirectionViewSet,
+                       GenreViewSet, LanguagesViewSet, PublishingViewSet,
+                       TranslatorViewSet)
 
 app_name = 'api'
 
 
 urlpatterns = [
+    path('api-token-auth/', obtain_auth_token), # Эндпоинт для получения токена (для rest_framework.authtoken)
     path('languages/', LanguagesViewSet.as_view(
         {
             "get": "list",

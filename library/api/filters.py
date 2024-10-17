@@ -1,13 +1,12 @@
-from django.db.models import Q
+import django_filters
 from django import forms
+from django.db.models import Q
 
 from book.models import *
 
-import django_filters
-
 
 class AuthorFilter(django_filters.FilterSet):
-    """Фильтр поиск автоворов по названию и датам рождения"""
+    """Кастомный фильтр для модели Authors"""
 
     # lookup_expr = "field lookup":
     # 1) exact - точное совпадение
@@ -41,10 +40,27 @@ class AuthorFilter(django_filters.FilterSet):
             'last_name': ['icontains'],  # Фильтрация по фамилии
         }
 
-
     @staticmethod
     def filter_first_name(queryset, name, value):
         if value:
             names = value.replace(' ', '').split(',') if value.find(',') != -1 else value.split(' ')
             return queryset.filter(Q(first_name__in=names))
         return queryset
+
+
+class BookFilter(django_filters.FilterSet):
+    """Кастомный фильтр для модели Books"""
+    genre = django_filters.ModelChoiceFilter(queryset=Genres.objects.all(), field_name='genre', to_field_name='id')
+    author = django_filters.ModelChoiceFilter(queryset=Authors.objects.all(), field_name='author', to_field_name='id')
+    publishing = django_filters.ModelChoiceFilter(queryset=Publishing.objects.all(),
+                                                  field_name='publishing', to_field_name='id')
+    binding = django_filters.ModelChoiceFilter(queryset=Bindings.objects.all(), field_name='binding',
+                                               to_field_name='id')
+
+    class Meta:
+        model = Books
+        fields = {
+            'name': ['icontains'],
+            'ISBN': ['startswith'],
+            'year_date': ['gte', 'lte', 'exact'],
+        }

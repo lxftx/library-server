@@ -1,8 +1,8 @@
 from django.utils import timezone
 from rest_framework import serializers
 
-from book.models import Languages, Publishing, Direction, Translators, Countries, Cities, Authors, Genres, Books, \
-    Bindings
+from book.models import (Authors, Bindings, Books, Cities, Countries,
+                         Direction, Genres, Languages, Publishing, Translators)
 
 
 class LanguagesSerializer(serializers.ModelSerializer):
@@ -71,7 +71,10 @@ class AuthorsListSerializer(serializers.ModelSerializer):
         fields = ('id', 'first_name', 'last_name', 'patronymic', 'date', 'born')
 
     def get_born(self, obj):
-        return f"{obj.born.name}, {obj.born.country}"
+        if obj.born:
+            return f"{obj.born.name}, {obj.born.country}"
+        else:
+            return None
 
 
 class AuthorsSerializer(serializers.ModelSerializer):

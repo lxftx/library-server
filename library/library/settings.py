@@ -10,11 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
-import environ
 import os.path
-
 from pathlib import Path
 
+import environ
+from django.urls import reverse_lazy
 
 env = environ.Env(
     DEBUG=(bool, False),
@@ -25,7 +25,6 @@ env = environ.Env(
     DATABASES_HOST=(str, None),
     DATABASES_PORT=(str, None),
 )
-
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -43,7 +42,6 @@ DEBUG = env("DEBUG")
 
 ALLOWED_HOSTS = ["*"]
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -54,6 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
     'django_filters',
     'drf_yasg',
     'book',
@@ -68,6 +67,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'api.middleware.LoginRequiredMiddleware',
 ]
 
 ROOT_URLCONF = 'library.urls'
@@ -90,7 +90,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'library.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
@@ -104,7 +103,6 @@ DATABASES = {
         'PORT': env("DATABASES_PORT"),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -124,7 +122,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
@@ -135,7 +132,6 @@ TIME_ZONE = 'Asia/Yekaterinburg'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
@@ -151,6 +147,9 @@ else:
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media/'
 
+LOGIN_REDIRECT_URL = '/admin/'
+LOGOUT_REDIRECT_URL = '/'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
@@ -165,5 +164,33 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': [
         # 'rest_framework.filters.SearchFilter',
         'django_filters.rest_framework.DjangoFilterBackend'
-    ]
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',  # Для токенов
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication',  # Для JWT
+        'rest_framework.authentication.SessionAuthentication',  # Для сессий
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',  # Доступ только для аутентифицированных пользователей
+    ],
+}
+
+# SWAGGER DRF-YARL
+
+SWAGGER_SETTINGS = {
+    'USE_SESSION_AUTH': True,
+    'LOGIN_URL': reverse_lazy('user:login'),
+    'LOGOUT_URL': reverse_lazy('user:logout'),
+    'SECURITY_DEFINITIONS': {
+        'Basic': {
+            'type': 'basic'
+        },
+        'api_key': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+        }
+    },
+    "REFETCH_SCHEMA_WITH_AUTH": True,
+    "REFETCH_SCHEMA_ON_LOGOUT": True
 }
