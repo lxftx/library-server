@@ -24,7 +24,7 @@ from library.yasg import urlpatterns as yasg
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('book.urls')),
-    path('', include('user.urls')),
+    path('user/', include('users.urls')),
     path('api/v1/', include('api.urls')),
 ]
 

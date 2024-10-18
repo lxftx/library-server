@@ -1,5 +1,7 @@
 from django.utils import timezone
 from rest_framework import permissions, status, viewsets
+from rest_framework.authentication import (SessionAuthentication,
+                                           TokenAuthentication)
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
@@ -17,7 +19,12 @@ from book.models import (Authors, Bindings, Books, Cities, Countries,
 
 class BaseClassViewSet(viewsets.ModelViewSet):
     """Базовый класс для классов наследующихся от viewsets.ModelViewSet"""
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes - разрешение на выполнение определенным пользователям
+    # permission_classes = [permissions.IsAuthenticated]
+    # TokenAuthentication - выполнение каких либо методов через авторизацию по токену
+    # SessionAuthentication - выполнение каких либо методов через Django сессии с использованием django.contrib.auth
+    # authentication_classes - выполнение методов только через идентификацию по токену
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
 
     # При каждом запросе ModelViewSet вызывает метод get_permissions
     # def get_permissions(self):
@@ -131,10 +138,6 @@ class AuthorsViewSet(BaseClassViewSet):
             return AuthorsListSerializer
         else:
             return AuthorsSerializer
-
-    def list(self, request, *args, **kwargs):
-        print(request.GET)
-        return super().list(request, *args, **kwargs)
 
 
 class GenreViewSet(BaseClassViewSet):

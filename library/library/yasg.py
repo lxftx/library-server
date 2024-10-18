@@ -1,8 +1,8 @@
 from django.urls import path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
-from rest_framework import permissions, authentication
-from rest_framework.authentication import TokenAuthentication
+from rest_framework import permissions
+from rest_framework.authentication import SessionAuthentication
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -13,9 +13,8 @@ schema_view = get_schema_view(
         contact=openapi.Contact(email="contact@snippets.local"),
         license=openapi.License(name="BSD License"),
     ),
-    public=False,
-    # permission_classes=(permissions.IsAuthenticated,),
-    # authentication_classes=(TokenAuthentication,),
+    public=True,
+    authentication_classes=[SessionAuthentication],
 )
 
 

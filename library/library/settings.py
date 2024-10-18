@@ -56,7 +56,8 @@ INSTALLED_APPS = [
     'django_filters',
     'drf_yasg',
     'book',
-    'api'
+    'api',
+    'users'
 ]
 
 MIDDLEWARE = [
@@ -147,7 +148,7 @@ else:
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media/'
 
-LOGIN_REDIRECT_URL = '/admin/'
+LOGIN_REDIRECT_URL = '/user/login/'
 LOGOUT_REDIRECT_URL = '/'
 
 # Default primary key field type
@@ -170,6 +171,7 @@ REST_FRAMEWORK = {
         # 'rest_framework_simplejwt.authentication.JWTAuthentication',  # Для JWT
         'rest_framework.authentication.SessionAuthentication',  # Для сессий
     ],
+    # Глобальная настройка
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',  # Доступ только для аутентифицированных пользователей
     ],
@@ -178,19 +180,6 @@ REST_FRAMEWORK = {
 # SWAGGER DRF-YARL
 
 SWAGGER_SETTINGS = {
-    'USE_SESSION_AUTH': True,
-    'LOGIN_URL': reverse_lazy('user:login'),
-    'LOGOUT_URL': reverse_lazy('user:logout'),
-    'SECURITY_DEFINITIONS': {
-        'Basic': {
-            'type': 'basic'
-        },
-        'api_key': {
-            'type': 'apiKey',
-            'name': 'Authorization',
-            'in': 'header'
-        }
-    },
-    "REFETCH_SCHEMA_WITH_AUTH": True,
-    "REFETCH_SCHEMA_ON_LOGOUT": True
+    "LOGIN_URL": LOGIN_REDIRECT_URL,
+    "LOGOUT_URL": LOGOUT_REDIRECT_URL,
 }

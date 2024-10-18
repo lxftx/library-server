@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Авторизация</title>
+</head>
+<body>
+    <form action="" method="post">
+        {% if messages or form.non_field_errors%}
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                {{ form.non_field_errors }}
+            {% endif %}
+        {% endif %}
+        {% csrf_token %}
+        {{ form.username }}
+        {{ form.password }}
+        <input type="submit">
+    </form>
+</body>
+</html>

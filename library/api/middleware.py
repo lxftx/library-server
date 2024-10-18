@@ -1,6 +1,5 @@
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from rest_framework.authtoken.models import Token
 
 
 class LoginRequiredMiddleware:
@@ -11,8 +10,7 @@ class LoginRequiredMiddleware:
     def __call__(self, request):
         # Проверяем, если запрос идет к swagger и пользователь не авторизован
         if request.path.startswith('/swagger') and request.user and not request.user.is_authenticated:
-            return redirect(reverse_lazy('user:login'))
+            return redirect(reverse_lazy('users:login'))
 
-        user = Token.objects.get(user=request.user).key
         response = self.get_response(request)
         return response
