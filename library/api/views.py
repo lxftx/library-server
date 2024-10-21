@@ -1,10 +1,3 @@
-from django.utils import timezone
-from rest_framework import permissions, status, viewsets
-from rest_framework.authentication import (SessionAuthentication,
-                                           TokenAuthentication)
-from rest_framework.generics import get_object_or_404
-from rest_framework.response import Response
-
 from api.filters import AuthorFilter, BookFilter
 from api.serializers import (AuthorsListSerializer, AuthorsSerializer,
                              BindingsSerializer, BooksCreateSerializer,
@@ -15,6 +8,12 @@ from api.serializers import (AuthorsListSerializer, AuthorsSerializer,
                              TranslatorsSerializer)
 from book.models import (Authors, Bindings, Books, Cities, Countries,
                          Direction, Genres, Languages, Publishing, Translators)
+from django.utils import timezone
+from rest_framework import status, viewsets
+from rest_framework.authentication import (SessionAuthentication,
+                                           TokenAuthentication)
+from rest_framework.generics import get_object_or_404
+from rest_framework.response import Response
 
 
 class BaseClassViewSet(viewsets.ModelViewSet):
@@ -40,8 +39,6 @@ class BaseClassViewSet(viewsets.ModelViewSet):
     #
     #     # Возвращаем соответствующий список классов разрешений
     #     return [permission() for permission in permission_classes]
-
-
 
     def perform_create(self, serializer):
         """Переопределили метод perform_create, который срабатывает при создании объекта и выводит информацию о
@@ -193,6 +190,9 @@ class BooksViewSet(BaseClassViewSet):
             return BooksRetrieveSerializer
         else:
             return BooksCreateSerializer
+
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
     # Переопределили метод create, в котором мы сами выполняем действия проверки и сохранения. После успешного
     #         сохранения, выводится полная информация о сохраненной записи

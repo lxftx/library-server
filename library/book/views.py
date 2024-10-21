@@ -1,3 +1,6 @@
+from book.forms import create_form_for_model
+from book.models import (Authors, Bindings, Books, Cities, Countries,
+                         Direction, Genres, Languages, Publishing, Translators)
 from django import forms
 from django.db.models import Model
 from django.db.models.base import ModelBase
@@ -6,10 +9,6 @@ from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView
 from django.views.generic.list import ListView
-
-from book.forms import create_form_for_model
-from book.models import (Authors, Bindings, Books, Cities, Countries,
-                         Direction, Genres, Languages, Publishing, Translators)
 
 from . import models
 from .common.views import TitleMixin

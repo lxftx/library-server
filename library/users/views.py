@@ -1,15 +1,13 @@
 import datetime
 
 from django.contrib.auth import logout
+from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils import timezone
-from django.contrib.auth.models import User
-
 from users.forms import UserForm
 from users.models import UserLogLogin
-
 from users.services import *
 
 

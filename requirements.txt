@@ -7,3 +7,4 @@ environs
 pillow
 setuptools
 django-filter
+djangorestframework-simplejwt

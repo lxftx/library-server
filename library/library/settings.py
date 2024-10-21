@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 import os.path
+from datetime import timedelta
 from pathlib import Path
 
 import environ
@@ -52,9 +53,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'rest_framework.authtoken',
+    # 'rest_framework.authtoken',
     'django_filters',
     'drf_yasg',
+    'rest_framework_simplejwt',
     'book',
     'api',
     'users'
@@ -167,9 +169,9 @@ REST_FRAMEWORK = {
         'django_filters.rest_framework.DjangoFilterBackend'
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',  # Для токенов
-        # 'rest_framework_simplejwt.authentication.JWTAuthentication',  # Для JWT
-        'rest_framework.authentication.SessionAuthentication',  # Для сессий
+        # 'rest_framework.authentication.TokenAuthentication',  # Для токенов
+        'rest_framework_simplejwt.authentication.JWTAuthentication',  # Для JWT
+        # 'rest_framework.authentication.SessionAuthentication',  # Для сессий
     ],
     # Глобальная настройка
     'DEFAULT_PERMISSION_CLASSES': [
@@ -180,6 +182,17 @@ REST_FRAMEWORK = {
 # SWAGGER DRF-YARL
 
 SWAGGER_SETTINGS = {
+    "USE_SESSION_AUTH": True,
     "LOGIN_URL": LOGIN_REDIRECT_URL,
     "LOGOUT_URL": LOGOUT_REDIRECT_URL,
+    'DEFAULT_AUTO_SCHEMA_CLASS': 'api.swagger.swagger-utils.CustomAutoSchema',
+}
+
+# JWT AUTH
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
 }

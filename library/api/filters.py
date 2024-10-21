@@ -1,8 +1,7 @@
 import django_filters
+from book.models import *
 from django import forms
 from django.db.models import Q
-
-from book.models import *
 
 
 class AuthorFilter(django_filters.FilterSet):
