@@ -25,13 +25,13 @@ from library.yasg import urlpatterns as yasg
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('book.urls')),
-    path('user/', include('users.urls')),
+    path('users/', include('users.urls')),
     path('api/v1/', include('api.urls')),
     # api/token/ - используется для получения токена доступа и рефреш-токена. Используя TokenObtainPairView,
     # можно отправить POST-запрос с username и password на api/token/, чтобы получить access и refresh токены.
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path(settings.ACCESS_TOKEN_URL, TokenObtainPairView.as_view(), name='token_obtain_pair'),
     # api/token/refresh/ - используется для обновления токена доступа с помощью рефреш-токена.
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path(settings.REFRESH_TOKEN_URL, TokenRefreshView.as_view(), name='token_refresh'),
 ]
 
 urlpatterns += yasg

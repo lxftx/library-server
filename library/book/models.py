@@ -1,6 +1,4 @@
 from django.db import models
-from django.urls import reverse_lazy
-from django.utils import timezone
 
 
 class Languages(models.Model):
@@ -139,11 +137,9 @@ class Books(models.Model):
     # объектам. Задает имя, через которое можно обращаться к связанным объектам из другой модели.
     genre = models.ForeignKey(to=Genres, on_delete=models.SET_NULL, verbose_name="Жанр", null=True, blank=True, related_name="books_genre")
     author = models.ManyToManyField(to=Authors, verbose_name="Автор(-ы)", related_name="books_authors")
-    interpreter = models.ManyToManyField(to=Translators, verbose_name="Переводчик(-и)", related_name="interpreter",
-                                         blank=True)
-    direction = models.ManyToManyField(to=Direction, verbose_name="Направление", related_name="direction", blank=True)
-    publishing = models.ManyToManyField(to=Publishing, verbose_name="Издательство", related_name="publishing",
-                                        blank=True)
+    interpreter = models.ManyToManyField(to=Translators, verbose_name="Переводчик(-и)", related_name="interpreter", blank=True)
+    direction = models.ManyToManyField(to=Direction, verbose_name="Направление", related_name="direction")
+    publishing = models.ManyToManyField(to=Publishing, verbose_name="Издательство", related_name="publishing")
     language = models.ForeignKey(to=Languages, on_delete=models.SET_NULL, verbose_name="Язык", null=True, blank=True)
     year_date = models.PositiveSmallIntegerField(verbose_name="Год издания")
     binding = models.ForeignKey(to=Bindings, verbose_name="Переплет", on_delete=models.SET_NULL, null=True, blank=True)
@@ -152,7 +148,7 @@ class Books(models.Model):
     weight = models.PositiveSmallIntegerField(verbose_name="Вес", null=True, blank=True)
 
     def __str__(self):
-        return f"Книга - {self.name}"
+        return self.name
 
     class Meta:
         verbose_name = "Книга(-у)"

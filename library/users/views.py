@@ -1,51 +1,62 @@
-import datetime
-
 from django.contrib.auth import logout
-from django.contrib.auth.models import User
-from django.contrib.auth.views import LoginView
+from django.contrib import auth
+from rest_framework import status
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.utils import timezone
-from users.forms import UserForm
-from users.models import UserLogLogin
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+
 from users.services import *
 
 
-class UserLoginView(LoginView):
-    form_class = UserForm
-    template_name = "users/index.html"
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def login_view(request):
+    username = request.data.get('username')
+    password = request.data.get('password')
 
-    def form_valid(self, form):
-        user = form.get_user()
-        user_log_queryset = UserLogLogin.objects.select_related('user').filter(user=user)
-        if user_log_queryset.exists():
-            if not check_block_to_login(self.request, user_log_queryset.get(user=user)):
-                return redirect(reverse_lazy('users:login'))
-        return super().form_valid(form)
+    user = auth.authenticate(username=username, password=password)
+    if user is not None:
+        json_tokens = get_new_jwt_token(user)
+        response = Response()
+        # httponly=True - Когда кука устанавливается с флагом HttpOnly, это означает, что кука будет доступна только
+        # через HTTP-заголовки, и JavaScript не сможет получить доступ к этой куке через document.cookie. Браузер
+        # хранит куку и отправляет ее обратно на сервер с каждым запросом к этому домену, но JavaScript не может
+        # получить доступ к ней.
+        # samesite='Lax' - Cookies с флагом SameSite защищают от CSRF атак, ограничивая
+        # отправку cookies только на тот же сайт.
+        # secure=True Куки с флагом Secure передаются только по HTTPS
+        response.set_cookie(key='ref', value=json_tokens.get("refresh"), httponly=True, samesite='Lax')
+        response.data = {
+            'acc': json_tokens.get("access"),
+        }
+        return response
 
-    def form_invalid(self, form):
-        username = form.cleaned_data['username']
-        user_queryset = User.objects.filter(username=username)
-        if user_queryset.exists():
-            dt_now = timezone.now() + datetime.timedelta(hours=5)
-            dt_now_str = dt_now.strftime('%d/%m/%Y %H:%M:%S')
-            user_log_queryset = (UserLogLogin.objects.select_related('user')
-                                 .filter(user=user_queryset.get(username=username)))
-            if user_log_queryset.exists():
-                user_log = user_log_queryset.get(user=user_queryset.get(username=username))
-                add_block_to_login(self.request, user_log)
-                user_log.ip_address[dt_now_str] = get_client_ip(self.request)
-                user_log.save()
-            else:
-                UserLogLogin.objects.create(user=user_queryset.get(username=username),
-                                            ip_address={dt_now_str: get_client_ip(self.request)})
+    return Response({
+        "error": "Invalid Credentials"
+    }, status=status.HTTP_401_UNAUTHORIZED)
 
-        return super().form_invalid(form)
 
-    def get_success_url(self):
-        return reverse_lazy('schema-swagger-ui')
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def refresh_jwt_token(request):
+    ref_token = request.COOKIES.get('ref')
+    answer = update_or_create_new_token(ref_token, request.user)
+    response = Response()
+    if answer.get('update'):
+        response.data = {
+            'acc': answer.get('tokens').get('access')
+        }
+    else:
+        acc, ref = (answer.get('tokens').values())
+        response.set_cookie(key='ref', value=ref, httponly=True, samesite='Lax')
+        response.data = {
+            'acc': acc
+        }
+    return response
 
 
 def logout_view(request):
     logout(request)
-    return redirect(reverse_lazy('users:login'))
+    return redirect(reverse_lazy('book:index'))

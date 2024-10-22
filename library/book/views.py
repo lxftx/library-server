@@ -122,8 +122,7 @@ class PublishingView(TitleMixin, CreateView, ListView):
         }),
         'info': (forms.CharField, {
             'widget': forms.Textarea,
-            'widget_attrs': {'class': 'form__textarea', 'placeholder': 'Информация об издательстве', 'cols': 4,
-                             'rows': 4}
+            'widget_attrs': {'class': 'form__input', 'placeholder': 'Информация об издательстве'}
         })
     }
 
@@ -144,7 +143,7 @@ class DirectionView(TitleMixin, CreateView, ListView):
         }),
         'info': (forms.CharField, {
             'widget': forms.Textarea,
-            'widget_attrs': {'class': 'form__textarea', 'placeholder': 'Информация о направлении', 'cols': 4, 'rows': 4}
+            'widget_attrs': {'class': 'form__input', 'placeholder': 'Информация о направлении'}
         })
     }
 
@@ -247,7 +246,7 @@ class AuthorsView(TitleMixin, CreateView, ListView):
         }),
         'info': (forms.CharField, {
             'widget': forms.Textarea,
-            'widget_attrs': {'class': 'form__textarea', 'placeholder': 'Информация о направлении', 'cols': 4, 'rows': 4}
+            'widget_attrs': {'class': 'form__input', 'placeholder': 'Информация о направлении'}
         })
     }
 

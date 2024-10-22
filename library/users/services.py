@@ -1,5 +1,12 @@
+import json
+
+import requests
+
 from django.contrib import messages
 from django.utils import timezone
+from rest_framework_simplejwt.tokens import RefreshToken
+
+from django.conf import settings
 
 
 def get_client_ip(request):
@@ -33,3 +40,24 @@ def check_block_to_login(request, user):
         messages.error(request, 'Ваш аккаунт временно заблокирован из-за слишком большого количества неудачных '
                                 'попыток входа. Попробуйте позже.')
         return False
+
+
+def get_new_jwt_token(user):
+    """Функция создает новый токен ACCESS и REFRESH, передавая пользователя"""
+    refresh = RefreshToken.for_user(user)
+
+    # Возвращаем токены в виде JSON
+    return {
+        'refresh': str(refresh),  # Преобразуем refresh токен в строку
+        'access': str(refresh.access_token)  # Преобразуем access токен в строку
+    }
+
+
+def update_or_create_new_token(ref_token, user):
+    answer = requests.post(settings.DOMAIN_NAME + settings.REFRESH_TOKEN_URL,
+                           headers={'Content-Type': 'application/json'},
+                           data=json.dumps({'refresh': ref_token}))
+    if answer.status_code == 200:
+        return {"update": True, "tokens": answer.json()}
+    else:
+        return {"update": False, "tokens": get_new_jwt_token(user)}

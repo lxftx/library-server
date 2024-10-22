@@ -43,6 +43,14 @@ DEBUG = env("DEBUG")
 
 ALLOWED_HOSTS = ["*"]
 
+DOMAIN_NAME = env("DOMAIN_NAME")
+
+CORS_ORIGIN_ALLOW_ALL = True  # Разрешить все домены (не рекомендуется для продакшн)
+# Или
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:3000',  # Ваш фронтенд домен
+]
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -57,6 +65,7 @@ INSTALLED_APPS = [
     'django_filters',
     'drf_yasg',
     'rest_framework_simplejwt',
+    'corsheaders',
     'book',
     'api',
     'users'
@@ -71,6 +80,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'api.middleware.LoginRequiredMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'library.urls'
@@ -150,8 +160,8 @@ else:
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media/'
 
-LOGIN_REDIRECT_URL = '/user/login/'
-LOGOUT_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/users/login/'
+LOGOUT_REDIRECT_URL = '/users/logout/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -189,10 +199,16 @@ SWAGGER_SETTINGS = {
 }
 
 # JWT AUTH
+ACCESS_TOKEN_URL = 'api/token/'
+REFRESH_TOKEN_URL = 'api/token/refresh/'
+
+
+ACCESS_TOKEN_LIFETIME = timedelta(minutes=5)
+REFRESH_TOKEN_LIFETIME = timedelta(days=1)
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ACCESS_TOKEN_LIFETIME': ACCESS_TOKEN_LIFETIME,
+    'REFRESH_TOKEN_LIFETIME': REFRESH_TOKEN_LIFETIME,
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
 }

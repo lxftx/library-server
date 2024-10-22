@@ -9,9 +9,7 @@ from api.serializers import (AuthorsListSerializer, AuthorsSerializer,
 from book.models import (Authors, Bindings, Books, Cities, Countries,
                          Direction, Genres, Languages, Publishing, Translators)
 from django.utils import timezone
-from rest_framework import status, viewsets
-from rest_framework.authentication import (SessionAuthentication,
-                                           TokenAuthentication)
+from rest_framework import status, viewsets, permissions
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
@@ -23,13 +21,15 @@ class BaseClassViewSet(viewsets.ModelViewSet):
     # TokenAuthentication - выполнение каких либо методов через авторизацию по токену
     # SessionAuthentication - выполнение каких либо методов через Django сессии с использованием django.contrib.auth
     # authentication_classes - выполнение методов только через идентификацию по токену
-    authentication_classes = (TokenAuthentication, SessionAuthentication)
+    # authentication_classes = (JWTAuthentication, )
 
     # При каждом запросе ModelViewSet вызывает метод get_permissions
-    # def get_permissions(self):
-    #     """Переопределяем метод get_permissions, где назначаем свои собственные разрешения на определенные запросы"""
-    #     if self.action == 'list':
-    #         permission_classes = [permissions.AllowAny]
+    def get_permissions(self):
+        """Переопределяем метод get_permissions, где назначаем свои собственные разрешения на определенные запросы"""
+        if self.action == 'list':
+            permission_classes = [permissions.AllowAny]
+        else:
+            permission_classes = [permissions.IsAuthenticated]
     #     elif self.action == 'retrieve':
     #         permission_classes = [permissions.IsAuthenticated]
     #     elif self.action in ['update', 'partial_update', 'create', 'delete']:
@@ -38,7 +38,7 @@ class BaseClassViewSet(viewsets.ModelViewSet):
     #         permission_classes = [permissions.AllowAny]
     #
     #     # Возвращаем соответствующий список классов разрешений
-    #     return [permission() for permission in permission_classes]
+        return [permission() for permission in permission_classes]
 
     def perform_create(self, serializer):
         """Переопределили метод perform_create, который срабатывает при создании объекта и выводит информацию о
@@ -190,9 +190,6 @@ class BooksViewSet(BaseClassViewSet):
             return BooksRetrieveSerializer
         else:
             return BooksCreateSerializer
-
-    def list(self, request, *args, **kwargs):
-        return super().list(request, *args, **kwargs)
 
     # Переопределили метод create, в котором мы сами выполняем действия проверки и сохранения. После успешного
     #         сохранения, выводится полная информация о сохраненной записи

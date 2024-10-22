@@ -16,10 +16,36 @@ function modal() {
     const modal = document.querySelector('.modal'),
     btnOpen = document.querySelectorAll('.form__event-open'),
     body = document.querySelector('body'),
-    btnCancel = document.querySelector('.modal__btn-cancel');
+    btnCancel = document.querySelector('.modal__btn-cancel'),
+    modalForm = document.querySelector('.modal__form'),
+    formSave = modalForm.querySelector('.form__save'),
+    auth = document.querySelector('.navigate__auth');
+
+    formSave.remove();
+
+    auth.addEventListener('click', () => {
+        const formAuth = document.createElement('form'),
+            formInfo = document.createElement('div'),
+            username = document.createElement('input'),
+            password = document.createElement('input'),
+            btn = document.createElement('button');
+
+        formAuth.method = 'POST';  formAuth.classList = "form__auth";
+        formInfo.classList.add('modal__form-info');
+        username.id = 'username'; username.name = 'username'; username.type = 'text'; username.placeholder = "Имя пользователя"; username.classList.add('modal__form-input');
+        password.id = 'password'; password.name = 'password'; password.type = 'password'; password.classList.add('modal__form-input'), password.placeholder = 'Ваш пароль';
+        btn.classList = 'modal__form-btn'; btn.type = 'submit'; btn.textContent = "Войти!";
+        
+        formInfo.append(username, password);
+        formAuth.append(formInfo, btn);
+        modalForm.append(formAuth);
+
+        addShowModal();
+    });
 
     btnOpen.forEach(item => {
         item.addEventListener('click', () => {
+            modalForm.append(formSave);
             addShowModal();
         })
     });
@@ -29,17 +55,22 @@ function modal() {
     })
 
     document.addEventListener('keydown', (event) => {
-        if (modal.classList.contains('show') && event.key == 'Escape') deleteShowModal();
-        if (event.key = 'Tab') event.preventDefault();
+        if (window.getComputedStyle(modal).display == 'block' && event.key == 'Escape') deleteShowModal();
+        if (event.key == 'Tab') event.preventDefault();
     });
 
     function addShowModal() {
-        modal.classList.add('show');
+        modal.style.display = 'block';
         body.style.overflow='hidden';
     }
 
     function deleteShowModal() {
-        modal.classList.remove('show');
+        if (modalForm.lastChild == formSave) {
+            formSave.remove();
+        } else {
+            modalForm.querySelector('.form__auth').remove();
+        };
+        modal.style.display = 'none';
         body.style.overflow='';
     }
 }
@@ -62,10 +93,18 @@ function slider_form() {
     const contentBlocks = document.querySelectorAll('.content__block'),
         inner = document.querySelector('.content__block-inner'),
         prevButton = document.querySelector('.prev'),
-        nextButton = document.querySelector('.next');
+        nextButton = document.querySelector('.next'),
+        listTd = document.querySelectorAll('td'),
+        form = document.querySelector('form');
     let indexBlock = 1;
     inner.style.width = contentBlocks.length * 100 + '%';
     const width = window.getComputedStyle(inner).width.match(/\d+/g)[0] / 2;
+    
+    listTd.forEach(item => {
+        if (item.textContent.search("None") != -1) {
+            item.textContent = item.textContent.replace("None", "").trim();
+        };
+    });
 
     flipBlocks(0);
 
@@ -92,6 +131,11 @@ function slider_form() {
             }; 
         });
     }
+
+    form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        console.log(document.URL);
+    });
 }
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (slider_form);

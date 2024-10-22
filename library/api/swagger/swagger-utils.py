@@ -7,6 +7,6 @@ class CustomAutoSchema(SwaggerAutoSchema):
         tags = super().get_tags(operation_keys)
         if operation_keys:
             # Используем первый элемент operation_keys, чтобы задать тег, который может быть названием модели.
-            operation_keys = [key for key in operation_keys if key != 'v1']
+            operation_keys = [keys for keys in operation_keys if keys not in ['api', 'v1']]
             return [operation_keys[0].title()]
         return tags

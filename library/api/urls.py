@@ -17,6 +17,7 @@ router.register(r'translators', TranslatorViewSet, basename='translators')
 router.register(r'countries', CountriesViewSet, basename='countries')
 router.register(r'cities', CitiesViewSet, basename='cities')
 router.register(r'genres', GenreViewSet, basename='genres')
+router.register(r'bindings', BindingsViewSet, basename='bindings')
 router.register(r'books', BooksViewSet, basename='books')
 
 

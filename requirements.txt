@@ -1,10 +1,11 @@
-django~=5.1.1
+django
 psycopg2
 djangorestframework
 drf-yasg
 django-environ
-environs
+environ
 pillow
 setuptools
 django-filter
 djangorestframework-simplejwt
+requests

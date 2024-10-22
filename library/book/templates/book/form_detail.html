@@ -9,6 +9,12 @@
     <title>Библиотека | Форма | {{ title }}</title>
 {% endblock %}
 
+{% block auth %}
+    <a class="navigate__auth">
+        <img src="{% static 'icons/user-svgrepo-com.svg' %}" alt="user">
+    </a>
+{% endblock %}
+
 {% block content %}
     <div class="logo">
         <img src="{% static 'img/3044278b-f889-5b3c-b198-c0fe03b707b8.jpg' %}" alt="logo">
@@ -49,16 +55,14 @@
                             </table>
                         </div>
                         <div class="content__block">
-                            <form action="" method="post" enctype="multipart/form-data">
+                            <form action="" method="post" enctype="multipart/form-data" class="form__add">
                                 {% csrf_token %}
-                                <div class="form">
-                                    {% for item in form %}
-                                        <div class="form__info">
-                                            {{ item }}
-                                        </div>
-                                    {% endfor %}
-                                    <button class="form__btn-add" type="submit">Добавить</button>
-                                </div>
+                                {% for item in form %}
+                                    <div class="form__info">
+                                        {{ item }}
+                                    </div>
+                                {% endfor %}
+                                <button class="form__btn-add" type="submit">Добавить</button>
                             </form>
                         </div>
                     </div>
@@ -71,7 +75,7 @@
     <div class="modal">
         <div class="modal__form">
             <img class="modal__btn-cancel" src="{% static 'icons/cross-svgrepo-com.svg' %}" alt="cancel">
-            <form action="" method="post">
+            <form action="" method="post" class="form__save">
                 <div class="modal__form-info">
                     <input class="modal__form-input" name="name" type="text" id="name" placeholder="Текст выбранной записи">
                     <input class="modal__form-input" name="name" type="text" id="name" placeholder="Текст выбранной записи">
