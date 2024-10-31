@@ -16,6 +16,7 @@
 {% endblock %}
 
 {% block content %}
+    {% csrf_token %}
     <div class="logo">
         <img src="{% static 'img/3044278b-f889-5b3c-b198-c0fe03b707b8.jpg' %}" alt="logo">
         <div class="container">
@@ -56,11 +57,9 @@
                         </div>
                         <div class="content__block">
                             <form action="" method="post" enctype="multipart/form-data" class="form__add">
-                                {% csrf_token %}
+{#                                {% csrf_token %}#}
                                 {% for item in form %}
-                                    <div class="form__info">
-                                        {{ item }}
-                                    </div>
+                                    {{ item }}
                                 {% endfor %}
                                 <button class="form__btn-add" type="submit">Добавить</button>
                             </form>

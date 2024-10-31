@@ -1,3 +1,11 @@
+import json
+
+from django.utils import timezone
+from django.views.decorators.csrf import csrf_protect
+from rest_framework import permissions, status, viewsets
+from rest_framework.generics import get_object_or_404
+from rest_framework.response import Response
+
 from api.filters import AuthorFilter, BookFilter
 from api.serializers import (AuthorsListSerializer, AuthorsSerializer,
                              BindingsSerializer, BooksCreateSerializer,
@@ -8,14 +16,11 @@ from api.serializers import (AuthorsListSerializer, AuthorsSerializer,
                              TranslatorsSerializer)
 from book.models import (Authors, Bindings, Books, Cities, Countries,
                          Direction, Genres, Languages, Publishing, Translators)
-from django.utils import timezone
-from rest_framework import status, viewsets, permissions
-from rest_framework.generics import get_object_or_404
-from rest_framework.response import Response
 
 
 class BaseClassViewSet(viewsets.ModelViewSet):
     """Базовый класс для классов наследующихся от viewsets.ModelViewSet"""
+
     # permission_classes - разрешение на выполнение определенным пользователям
     # permission_classes = [permissions.IsAuthenticated]
     # TokenAuthentication - выполнение каких либо методов через авторизацию по токену
@@ -30,14 +35,14 @@ class BaseClassViewSet(viewsets.ModelViewSet):
             permission_classes = [permissions.AllowAny]
         else:
             permission_classes = [permissions.IsAuthenticated]
-    #     elif self.action == 'retrieve':
-    #         permission_classes = [permissions.IsAuthenticated]
-    #     elif self.action in ['update', 'partial_update', 'create', 'delete']:
-    #         permission_classes = [permissions.IsAdminUser]
-    #     else:
-    #         permission_classes = [permissions.AllowAny]
-    #
-    #     # Возвращаем соответствующий список классов разрешений
+        #     elif self.action == 'retrieve':
+        #         permission_classes = [permissions.IsAuthenticated]
+        #     elif self.action in ['update', 'partial_update', 'create', 'delete']:
+        #         permission_classes = [permissions.IsAdminUser]
+        #     else:
+        #         permission_classes = [permissions.AllowAny]
+        #
+        #     # Возвращаем соответствующий список классов разрешений
         return [permission() for permission in permission_classes]
 
     def perform_create(self, serializer):
@@ -67,6 +72,11 @@ class BaseClassViewSet(viewsets.ModelViewSet):
         print(f"LOG :"
               f" {timezone.now()} :"
               f" [DELETE] Model({instance._meta.verbose_name_plural.title()}) -> {instance}")
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_200_OK, data=json.dumps({"status": "Удалено"}, ensure_ascii=False))
 
 
 class LanguagesViewSet(BaseClassViewSet):

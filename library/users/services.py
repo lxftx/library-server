@@ -1,12 +1,10 @@
 import json
 
 import requests
-
+from django.conf import settings
 from django.contrib import messages
 from django.utils import timezone
 from rest_framework_simplejwt.tokens import RefreshToken
-
-from django.conf import settings
 
 
 def get_client_ip(request):
@@ -53,11 +51,15 @@ def get_new_jwt_token(user):
     }
 
 
-def update_or_create_new_token(ref_token, user):
+def update_or_create_new_token(cookies):
     answer = requests.post(settings.DOMAIN_NAME + settings.REFRESH_TOKEN_URL,
                            headers={'Content-Type': 'application/json'},
-                           data=json.dumps({'refresh': ref_token}))
+                           data=json.dumps({'refresh': cookies.get('ref')}))
     if answer.status_code == 200:
         return {"update": True, "tokens": answer.json()}
     else:
-        return {"update": False, "tokens": get_new_jwt_token(user)}
+        tokens = requests.post(settings.DOMAIN_NAME + settings.ACCESS_TOKEN_URL,
+                               headers={'Content-Type': 'application/json'},
+                               data=json.dumps({'username': cookies.get('username'),
+                                                'password': cookies.get('password')}))
+        return {"update": False, "tokens": tokens}

@@ -1,4 +1,5 @@
 from django.urls import path
+
 from users.views import login_view, logout_view, refresh_jwt_token
 
 app_name = 'users'

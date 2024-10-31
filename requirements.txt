@@ -9,3 +9,4 @@ setuptools
 django-filter
 djangorestframework-simplejwt
 requests
+isort

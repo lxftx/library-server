@@ -45,10 +45,14 @@ ALLOWED_HOSTS = ["*"]
 
 DOMAIN_NAME = env("DOMAIN_NAME")
 
-CORS_ORIGIN_ALLOW_ALL = True  # Разрешить все домены (не рекомендуется для продакшн)
+CORS_ALLOW_CREDENTIALS = True   # Позволяет отправлять куки с запросами.
+
+# CORS_ORIGIN_ALLOW_ALL = True  # Разрешить все домены (не рекомендуется для продакшн)
 # Или
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',  # Ваш фронтенд домен
+    'http://192.168.1.136:3000',
+    'http://127.0.0.1:8000',
 ]
 
 # Application definition
@@ -72,6 +76,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -80,7 +85,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'api.middleware.LoginRequiredMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'library.urls'
@@ -201,7 +205,6 @@ SWAGGER_SETTINGS = {
 # JWT AUTH
 ACCESS_TOKEN_URL = 'api/token/'
 REFRESH_TOKEN_URL = 'api/token/refresh/'
-
 
 ACCESS_TOKEN_LIFETIME = timedelta(minutes=5)
 REFRESH_TOKEN_LIFETIME = timedelta(days=1)

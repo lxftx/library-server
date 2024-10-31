@@ -1,8 +1,9 @@
-from django.contrib.auth import logout
 from django.contrib import auth
-from rest_framework import status
+from django.contrib.auth import logout
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
+from django.views.decorators.csrf import csrf_protect
+from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -12,10 +13,10 @@ from users.services import *
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
+# @csrf_protect   # Отправка запросов только через заголовок X-CSRFToken (cookie)
 def login_view(request):
     username = request.data.get('username')
     password = request.data.get('password')
-
     user = auth.authenticate(username=username, password=password)
     if user is not None:
         json_tokens = get_new_jwt_token(user)
@@ -28,6 +29,8 @@ def login_view(request):
         # отправку cookies только на тот же сайт.
         # secure=True Куки с флагом Secure передаются только по HTTPS
         response.set_cookie(key='ref', value=json_tokens.get("refresh"), httponly=True, samesite='Lax')
+        response.set_cookie(key='username', value=username, httponly=True, samesite='Lax')
+        response.set_cookie(key='password', value=password, httponly=True, samesite='Lax')
         response.data = {
             'acc': json_tokens.get("access"),
         }
@@ -40,9 +43,10 @@ def login_view(request):
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
+# @csrf_protect
 def refresh_jwt_token(request):
-    ref_token = request.COOKIES.get('ref')
-    answer = update_or_create_new_token(ref_token, request.user)
+    cookies = request.COOKIES
+    answer = update_or_create_new_token(cookies)
     response = Response()
     if answer.get('update'):
         response.data = {

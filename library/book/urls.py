@@ -1,6 +1,7 @@
+from django.urls import path
+
 from book.views import (FormListView, IndexView,  # , delete_form_model
                         get_info_form_model)
-from django.urls import path
 
 app_name = 'book'
 

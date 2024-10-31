@@ -1,10 +1,11 @@
+from django.urls import include, path
+from rest_framework.authtoken.views import obtain_auth_token
+from rest_framework.routers import DefaultRouter
+
 from api.views import (AuthorsViewSet, BindingsViewSet, BooksViewSet,
                        CitiesViewSet, CountriesViewSet, DirectionViewSet,
                        GenreViewSet, LanguagesViewSet, PublishingViewSet,
                        TranslatorViewSet)
-from django.urls import path, include
-from rest_framework.authtoken.views import obtain_auth_token
-from rest_framework.routers import DefaultRouter
 
 app_name = 'api'
 

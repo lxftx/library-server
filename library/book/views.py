@@ -1,14 +1,15 @@
-from book.forms import create_form_for_model
-from book.models import (Authors, Bindings, Books, Cities, Countries,
-                         Direction, Genres, Languages, Publishing, Translators)
 from django import forms
 from django.db.models import Model
 from django.db.models.base import ModelBase
-from django.http import Http404, HttpResponse
-from django.urls import reverse_lazy
+from django.http import Http404
+from django.shortcuts import render
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView
 from django.views.generic.list import ListView
+
+from book.forms import create_form_for_model
+from book.models import (Authors, Bindings, Books, Cities, Countries,
+                         Direction, Genres, Languages, Publishing, Translators)
 
 from . import models
 from .common.views import TitleMixin
@@ -29,8 +30,8 @@ def get_info_form_model(request, form_model, pk=None):
     """Функция динамеческого создания ссылки для всех моделей"""
     match form_model:
         case 'languages':
-            view = LanguageView.as_view()
-            return view(request, pk)
+            view = language_view
+            return view(request)
         case 'publishing':
             view = PublishingView.as_view()
             return view(request, pk)
@@ -92,20 +93,17 @@ class FormListView(TemplateView):
         return context
 
 
-class LanguageView(TitleMixin, CreateView, ListView):
+def language_view(request):
     """Представление модели Языки"""
-    model = Languages
-    template_name = 'book/form_detail.html'
     title = 'Языки'
-    model_form_url = 'languages'
-
     custom_fields = {
         'name': (forms.CharField, {
             'widget_attrs': {'class': 'form__input', 'placeholder': 'Каков язык?'}
         }),
     }
-
     form_class = create_form_for_model(model_class=Languages, custom_fields=custom_fields)
+    context = {'title': title, 'form': form_class}
+    return render(request, 'book/form_detail.html', context=context)
 
 
 class PublishingView(TitleMixin, CreateView, ListView):
